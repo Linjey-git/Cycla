@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:intl/intl.dart';
-
+import 'package:timezone/data/latest.dart' as tz;
 import 'screens/home_screen.dart';
 import 'services/database_service.dart';
 import 'services/notification_service.dart';
+import 'services/cycle_calculator.dart';
 import 'utils/theme.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -16,16 +14,16 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  //Ініціалізація timezone
+  
+  // Ініціалізація timezone
   tz.initializeTimeZones();
-
+  
   // Ініціалізація служби нотифікацій
   await NotificationService.initialize(flutterLocalNotificationsPlugin);
-
+  
   // Ініціалізація бази даних
   await DatabaseService.instance.database;
-
+  
   runApp(const MyApp());
 }
 
@@ -37,17 +35,20 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => CycleProvider(),
       child: MaterialApp(
-        title: 'Cycle Tracker',
+        title: 'Cycla',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
-        home: const HomeScreen(),
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: const [Locale('uk', 'UA'), Locale('en', 'US')],
+        supportedLocales: const [
+          Locale('uk', 'UA'),
+          Locale('en', 'US'),
+        ],
         locale: const Locale('uk', 'UA'),
+        home: const HomeScreen(),
       ),
     );
   }
@@ -58,16 +59,16 @@ class CycleProvider extends ChangeNotifier {
   int _cycleLength = 28;
   int _periodLength = 5;
   Map<DateTime, List<String>> _symptoms = {};
-
+  
   DateTime? get lastPeriodStart => _lastPeriodStart;
   int get cycleLength => _cycleLength;
   int get periodLength => _periodLength;
   Map<DateTime, List<String>> get symptoms => _symptoms;
-
+  
   CycleProvider() {
     _loadData();
   }
-
+  
   Future<void> _loadData() async {
     final db = DatabaseService.instance;
     final cycleData = await db.getCycleData();
@@ -79,7 +80,7 @@ class CycleProvider extends ChangeNotifier {
     _symptoms = await db.getAllSymptoms();
     notifyListeners();
   }
-
+  
   Future<void> updateCycleData({
     DateTime? lastPeriodStart,
     int? cycleLength,
@@ -88,7 +89,7 @@ class CycleProvider extends ChangeNotifier {
     if (lastPeriodStart != null) _lastPeriodStart = lastPeriodStart;
     if (cycleLength != null) _cycleLength = cycleLength;
     if (periodLength != null) _periodLength = periodLength;
-
+    
     await DatabaseService.instance.saveCycleData(
       _lastPeriodStart!,
       _cycleLength,
@@ -96,7 +97,7 @@ class CycleProvider extends ChangeNotifier {
     );
     notifyListeners();
   }
-
+  
   Future<void> addSymptom(DateTime date, String symptom) async {
     if (_symptoms[date] == null) {
       _symptoms[date] = [];
@@ -105,45 +106,49 @@ class CycleProvider extends ChangeNotifier {
     await DatabaseService.instance.saveSymptom(date, symptom);
     notifyListeners();
   }
-
-  DateTime? getNextPeriodDate() {
+  
+  CycleCalculator? getCalculator() {
     if (_lastPeriodStart == null) return null;
-    return _lastPeriodStart!.add(Duration(days: _cycleLength));
-  }
-
-  DateTime? getOvulationDate() {
-    if (_lastPeriodStart == null) return null;
-    return _lastPeriodStart!.add(Duration(days: _cycleLength - 14));
-  }
-
-  List<DateTime> getFertileWindow() {
-    final ovulation = getOvulationDate();
-    if (ovulation == null) return [];
-
-    List<DateTime> fertile = [];
-    for (int i = -5; i <= 1; i++) {
-      fertile.add(ovulation.add(Duration(days: i)));
-    }
-    return fertile;
-  }
-
-  bool isPeriodDay(DateTime date) {
-    if (_lastPeriodStart == null) return false;
-    final diff = date.difference(_lastPeriodStart!).inDays;
-    return diff >= 0 && diff < _periodLength;
-  }
-
-  bool isFertileDay(DateTime date) {
-    return getFertileWindow().any(
-      (d) => d.year == date.year && d.month == date.month && d.day == date.day,
+    return CycleCalculator(
+      lastPeriodStart: _lastPeriodStart!,
+      cycleLength: _cycleLength,
+      periodLength: _periodLength,
     );
   }
 
+  DateTime? getNextPeriodDate() {
+    return getCalculator()?.getNextPeriodDate();
+  }
+  
+  DateTime? getOvulationDate() {
+    return getCalculator()?.getNextOvulationDate();
+  }
+  
+  List<DateTime> getFertileWindow() {
+    final calc = getCalculator();
+    if (calc == null) return [];
+    return calc.getAllFertileDays(1);
+  }
+  
+  bool isPeriodDay(DateTime date) {
+    final calc = getCalculator();
+    if (calc == null) return false;
+    return calc.isPeriodDay(date, 20);
+  }
+  
+  bool isFertileDay(DateTime date) {
+    final calc = getCalculator();
+    if (calc == null) return false;
+    return calc.isFertileDay(date, 20);
+  }
+  
   bool isOvulationDay(DateTime date) {
-    final ovulation = getOvulationDate();
-    if (ovulation == null) return false;
-    return date.year == ovulation.year &&
-        date.month == ovulation.month &&
-        date.day == ovulation.day;
+    final calc = getCalculator();
+    if (calc == null) return false;
+    return calc.isOvulationDay(date, 20);
+  }
+  
+  Map<String, dynamic>? getDayInfo(DateTime date) {
+    return getCalculator()?.getDayInfo(date);
   }
 }
