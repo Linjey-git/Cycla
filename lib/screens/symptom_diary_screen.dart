@@ -16,16 +16,16 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
   bool isLoading = true;
 
   final List<String> availableSymptoms = [
-    'Головний біль',
-    'Втомлення',
-    'Вздуття',
-    'Депресія',
-    'Спазми',
-    'Запор',
-    'Діарея',
-    'Висипання',
-    'Болі в суглобах',
-    'Сніданок',
+    '🤕 Headache',
+    '😫 Cramps',
+    '😌 Good mood',
+    '😢 Low mood',
+    '💤 Fatigue',
+    '🍕 Increased appetite',
+    '🤢 Nausea',
+    '💆 Breast tenderness',
+    '🔥 Elevated temperature',
+    '💧 Heavy bleeding',
   ];
 
   @override
@@ -55,7 +55,7 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Помилка при завантаженні: $e')));
+        ).showSnackBar(SnackBar(content: Text('Error during download: $e')));
       }
     }
   }
@@ -71,7 +71,7 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Симптоми збережені'),
+            content: Text('Symptoms saved successfully'),
             backgroundColor: AppTheme.primaryColor,
           ),
         );
@@ -80,7 +80,7 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Помилка при збереженні: $e')));
+        ).showSnackBar(SnackBar(content: Text('Error during download: $e')));
       }
     }
   }
@@ -95,7 +95,7 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Щоденник симптомів'),
+        title: const Text('Symptom diary'),
         backgroundColor: AppTheme.primaryColor,
       ),
       body: isLoading
@@ -110,7 +110,7 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Дата: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                        'Date: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -129,7 +129,7 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
                             _loadSymptoms();
                           }
                         },
-                        child: const Text('Змінити дату'),
+                        child: const Text('Change date'),
                       ),
                     ],
                   ),
@@ -137,7 +137,7 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
 
                   // Список симптомів
                   const Text(
-                    'Вибрані симптоми:',
+                    'Selected symptoms:',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
@@ -170,11 +170,11 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
                     controller: descriptionController,
                     maxLines: 4,
                     decoration: InputDecoration(
-                      hintText: 'Додати опис...',
+                      hintText: 'Add description...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      labelText: 'Опис',
+                      labelText: 'Description',
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -184,7 +184,7 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _saveSymptoms,
-                      child: const Text('Зберегти симптоми'),
+                      child: const Text('Save symptoms'),
                     ),
                   ),
                 ],

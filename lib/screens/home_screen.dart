@@ -49,19 +49,19 @@ class _HomeScreenState extends State<HomeScreen> {
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Головна'),
             BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today),
-              label: 'Календар',
+              label: 'Calendar',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.tips_and_updates),
-              label: 'Поради',
+              label: 'Tips',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.favorite),
-              label: 'Симптоми',
+              label: 'Symptoms',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.notifications),
-              label: 'Нагадування',
+              label: 'Reminders',
             ),
           ],
         ),
@@ -81,7 +81,7 @@ class HomeTab extends StatelessWidget {
         final nextPeriod = provider.getNextPeriodDate();
         final ovulation = provider.getOvulationDate();
 
-        String cyclePhase = 'Не налаштовано';
+        String cyclePhase = 'Not set up';
         String phaseEmoji = '🌸';
 
         if (provider.lastPeriodStart != null) {
@@ -94,19 +94,19 @@ class HomeTab extends StatelessWidget {
 
           switch (phase) {
             case 'menstrual':
-              cyclePhase = 'Менструація';
+              cyclePhase = 'Menstruation';
               phaseEmoji = '🌸';
               break;
             case 'follicular':
-              cyclePhase = 'Фолікулярна фаза';
+              cyclePhase = 'Follicular phase';
               phaseEmoji = '🌱';
               break;
             case 'ovulation':
-              cyclePhase = 'Овуляція';
+              cyclePhase = 'Ovulation';
               phaseEmoji = '🌟';
               break;
             case 'luteal':
-              cyclePhase = 'Лютеїнова фаза';
+              cyclePhase = 'Luteal phase';
               phaseEmoji = '🌙';
               break;
           }
@@ -114,7 +114,7 @@ class HomeTab extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Cycle Tracker'),
+            title: const Text('Cycla'),
             actions: [
               IconButton(
                 icon: const Icon(Icons.settings),
@@ -159,7 +159,7 @@ class HomeTab extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            DateFormat('d MMMM yyyy', 'uk').format(today),
+                            DateFormat('d MMMM yyyy', 'en').format(today),
                             style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 16,
@@ -175,9 +175,9 @@ class HomeTab extends StatelessWidget {
                   if (nextPeriod != null) ...[
                     _buildInfoCard(
                       context,
-                      '📅 Наступна менструація',
-                      DateFormat('d MMMM', 'uk').format(nextPeriod),
-                      'через ${nextPeriod.difference(today).inDays} днів',
+                      '📅 Next menstruation',
+                      DateFormat('d MMMM', 'en').format(nextPeriod),
+                      'in ${nextPeriod.difference(today).inDays} days',
                       AppTheme.periodColor,
                     ),
                     const SizedBox(height: 12),
@@ -186,11 +186,11 @@ class HomeTab extends StatelessWidget {
                   if (ovulation != null) ...[
                     _buildInfoCard(
                       context,
-                      '🌟 Овуляція',
-                      DateFormat('d MMMM', 'uk').format(ovulation),
+                      '🌟 Ovulation',
+                      DateFormat('d MMMM', 'en').format(ovulation),
                       ovulation.isAfter(today)
-                          ? 'через ${ovulation.difference(today).inDays} днів'
-                          : 'минула',
+                          ? 'in ${ovulation.difference(today).inDays} days'
+                          : 'has passed',
                       AppTheme.ovulationColor,
                     ),
                     const SizedBox(height: 12),
@@ -203,7 +203,7 @@ class HomeTab extends StatelessWidget {
 
                   // Швидкі дії
                   Text(
-                    'Швидкі дії',
+                    'Quick actions',
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 12),
@@ -214,7 +214,7 @@ class HomeTab extends StatelessWidget {
                         child: _buildQuickAction(
                           context,
                           '📝',
-                          'Симптоми',
+                          'Symptoms',
                           () => Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -228,7 +228,7 @@ class HomeTab extends StatelessWidget {
                         child: _buildQuickAction(
                           context,
                           '💊',
-                          'Ліки',
+                          'Medicines',
                           () => Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -296,7 +296,7 @@ class HomeTab extends StatelessWidget {
                 Icon(Icons.favorite, color: AppTheme.fertileColor, size: 28),
                 const SizedBox(width: 12),
                 Text(
-                  'Фертильне вікно',
+                  'Fertile Window',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ],
@@ -304,8 +304,8 @@ class HomeTab extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               isFertile
-                  ? 'Сьогодні у вас високий шанс завагітніти'
-                  : 'Сьогодні низький шанс завагітніти',
+                  ? 'Today you have a high chance of becoming pregnant'
+                  : 'Today, you have a low chance of becoming pregnant',
               style: TextStyle(
                 color: isFertile ? AppTheme.fertileColor : Colors.grey,
                 fontWeight: FontWeight.bold,
@@ -361,7 +361,7 @@ class HomeTab extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Налаштування циклу'),
+        title: const Text('Cycle settings'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -369,7 +369,7 @@ class HomeTab extends StatelessWidget {
               TextField(
                 controller: cycleLengthController,
                 decoration: const InputDecoration(
-                  labelText: 'Довжина циклу (днів)',
+                  labelText: 'Cycle length (days)',
                   hintText: '28',
                 ),
                 keyboardType: TextInputType.number,
@@ -378,7 +378,7 @@ class HomeTab extends StatelessWidget {
               TextField(
                 controller: periodLengthController,
                 decoration: const InputDecoration(
-                  labelText: 'Довжина менструації (днів)',
+                  labelText: 'Menstruation length (days)',
                   hintText: '5',
                 ),
                 keyboardType: TextInputType.number,
@@ -402,8 +402,8 @@ class HomeTab extends StatelessWidget {
                 },
                 child: Text(
                   lastPeriodController.text.isEmpty
-                      ? 'Вибрати дату останньої менструації'
-                      : 'Остання: ${lastPeriodController.text}',
+                      ? 'Select the date of your last menstruation'
+                      : 'Last: ${lastPeriodController.text}',
                 ),
               ),
             ],
@@ -412,7 +412,7 @@ class HomeTab extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Скасувати'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -425,7 +425,7 @@ class HomeTab extends StatelessWidget {
               }
               Navigator.pop(context);
             },
-            child: const Text('Зберегти'),
+            child: const Text('Save'),
           ),
         ],
       ),

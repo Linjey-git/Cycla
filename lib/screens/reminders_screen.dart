@@ -35,7 +35,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Нагадування')),
+      appBar: AppBar(title: const Text('Reminders')),
       body: reminders.isEmpty
           ? Center(
               child: Column(
@@ -48,7 +48,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Немає нагадувань',
+                    'No reminders',
                     style: TextStyle(
                       fontSize: 20,
                       color: Colors.grey[600],
@@ -57,7 +57,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Натисніть + щоб додати',
+                    'Press + to add',
                     style: TextStyle(fontSize: 16, color: Colors.grey[400]),
                   ),
                 ],
@@ -74,7 +74,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddReminderDialog(context),
         icon: const Icon(Icons.add),
-        label: const Text('Додати'),
+        label: const Text('Add'),
       ),
     );
   }
@@ -161,7 +161,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   await NotificationService.scheduleNotification(
                     id: reminder['id'] as int,
                     title: title,
-                    body: description ?? 'Час прийняти ліки',
+                    body: description ?? 'Time to take your medicine',
                     scheduledTime: time,
                     fln: flutterLocalNotificationsPlugin,
                   );
@@ -195,7 +195,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Нове нагадування'),
+          title: const Text('New Reminder'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -203,8 +203,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 TextField(
                   controller: titleController,
                   decoration: const InputDecoration(
-                    labelText: 'Назва*',
-                    hintText: 'Наприклад: Прийняти вітаміни',
+                    labelText: 'Name*',
+                    hintText: 'For example: Take vitamins',
                     prefixIcon: Icon(Icons.title),
                   ),
                 ),
@@ -212,8 +212,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 TextField(
                   controller: descriptionController,
                   decoration: const InputDecoration(
-                    labelText: 'Опис (необов\'язково)',
-                    hintText: 'Додаткова інформація',
+                    labelText: 'Description (optional)',
+                    hintText: 'Additional information',
                     prefixIcon: Icon(Icons.description),
                   ),
                   maxLines: 2,
@@ -222,7 +222,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.access_time),
-                  title: const Text('Час'),
+                  title: const Text('Time'),
                   trailing: TextButton(
                     onPressed: () async {
                       final time = await showTimePicker(
@@ -250,13 +250,13 @@ class _RemindersScreenState extends State<RemindersScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Скасувати'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () async {
                 if (titleController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Будь ласка, введіть назву')),
+                    const SnackBar(content: Text('Please enter the name')),
                   );
                   return;
                 }
@@ -298,12 +298,12 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 // ✅ Показуємо повідомлення ПІСЛЯ закриття
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Нагадування додано'),
+                    content: Text('Reminder added'),
                     backgroundColor: AppTheme.primaryColor,
                   ),
                 );
               },
-              child: const Text('Додати'),
+              child: const Text('Add'),
             ),
           ],
         ),
@@ -315,12 +315,12 @@ class _RemindersScreenState extends State<RemindersScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Видалити нагадування?'),
-        content: const Text('Це нагадування буде видалено назавжди.'),
+        title: const Text('Delete reminder?'),
+        content: const Text('This reminder will be permanently deleted.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Скасувати'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -333,11 +333,11 @@ class _RemindersScreenState extends State<RemindersScreen> {
               Navigator.pop(context);
 
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Нагадування видалено')),
+                const SnackBar(content: Text('Reminder deleted')),
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Видалити'),
+            child: const Text('Delete'),
           ),
         ],
       ),

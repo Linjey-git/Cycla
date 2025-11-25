@@ -6,12 +6,12 @@ class AppTheme {
   static const Color fertileColor = Color(0xFF4CAF50); // Зелений
   static const Color ovulationColor = Color(0xFFFF9800); // Помаранчевий
   static const Color normalColor = Color(0xFF9C27B0); // Фіолетовий
-  
+
   static const Color primaryColor = Color(0xFFE91E63);
   static const Color secondaryColor = Color(0xFF9C27B0);
   static const Color backgroundColor = Color(0xFFFCE4EC);
   static const Color cardColor = Colors.white;
-  
+
   static ThemeData lightTheme = ThemeData(
     primaryColor: primaryColor,
     scaffoldBackgroundColor: backgroundColor,
@@ -33,18 +33,14 @@ class AppTheme {
     cardTheme: CardThemeData(
       color: cardColor,
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         elevation: 4,
       ),
     ),
@@ -79,73 +75,72 @@ class AppTheme {
         fontWeight: FontWeight.bold,
         color: Colors.black87,
       ),
-      bodyLarge: TextStyle(
-        fontSize: 16,
-        color: Colors.black87,
-      ),
-      bodyMedium: TextStyle(
-        fontSize: 14,
-        color: Colors.black54,
-      ),
+      bodyLarge: TextStyle(fontSize: 16, color: Colors.black87),
+      bodyMedium: TextStyle(fontSize: 14, color: Colors.black54),
     ),
   );
 }
 
 class AppConstants {
   static const List<String> symptoms = [
-    '🤕 Головний біль',
-    '😫 Судоми',
-    '😌 Хороший настрій',
-    '😢 Поганий настрій',
-    '💤 Втома',
-    '🍕 Підвищений апетит',
-    '🤢 Нудота',
-    '💆 Біль у грудях',
-    '🔥 Підвищена температура',
-    '💧 Сильна кровотеча',
+    '🤕 Headache',
+    '😫 Cramps',
+    '😌 Good mood',
+    '😢 Low mood',
+    '💤 Fatigue',
+    '🍕 Increased appetite',
+    '🤢 Nausea',
+    '💆 Breast tenderness',
+    '🔥 Elevated temperature',
+    '💧 Heavy bleeding',
   ];
-  
+
   static const List<String> tipsByPhase = [];
-  
+
   static String getTipForPhase(String phase, int day) {
     final tips = {
       'menstrual': [
-        '🌸 Пийте більше води, щоб зменшити здуття',
-        '🧘 Спробуйте легку йогу для полегшення болю',
-        '🍫 Їжте продукти з магнієм (темний шоколад, горіхи)',
-        '💆 Зробіть масаж живота проти годинникової стрілки',
-        '😴 Відпочивайте більше - вашому тілу потрібна енергія',
+        '🌸 Drink more water to reduce bloating',
+        '🧘 Try light yoga to ease pain',
+        '🍫 Eat foods rich in magnesium (dark chocolate, nuts)',
+        '💆 Massage your belly counterclockwise',
+        '😴 Rest more — your body needs the energy',
       ],
       'follicular': [
-        '💪 Відмінний час для інтенсивних тренувань!',
-        '🎯 Ваша енергія на піку - плануйте складні задачі',
-        '🥗 Додайте білки та свіжі овочі до раціону',
-        '🧠 Гарний час для навчання нового',
-        '✨ Ваша шкіра сяє - чудовий момент для фото!',
+        '💪 Great time for intense workouts!',
+        '🎯 Your energy is at its peak — plan challenging tasks',
+        '🥗 Add protein and fresh vegetables to your diet',
+        '🧠 A good time to learn something new',
+        '✨ Your skin is glowing — perfect moment for photos!',
       ],
       'ovulation': [
-        '🌟 Пік енергії та впевненості!',
-        '💃 Відмінний час для соціальної активності',
-        '🥑 Їжте продукти з Омега-3 (риба, авокадо)',
-        '🏃 Ваше тіло готове до фізичних викликів',
-        '💚 Підвищена фертильність - будьте обережні',
+        '🌟 Peak energy and confidence!',
+        '💃 Great time for social activity',
+        '🥑 Eat foods rich in Omega-3 (fish, avocado)',
+        '🏃 Your body is ready for physical challenges',
+        '💚 Increased fertility — be mindful',
       ],
       'luteal': [
-        '🍵 Пийте трав\'яні чаї для заспокоєння',
-        '🛀 Розслаблюючі ванни допоможуть із ПМС',
-        '🍎 Їжте складні вуглеводи для стабільного настрою',
-        '📝 Робіть списки - може бути важче концентруватись',
-        '💤 Слухайте своє тіло та відпочивайте',
+        '🍵 Drink herbal teas to calm your body',
+        '🛀 Relaxing baths can help with PMS',
+        '🍎 Eat complex carbs to keep your mood stable',
+        '📝 Make lists — concentrating may be harder',
+        '💤 Listen to your body and rest',
       ],
     };
-    
-    return tips[phase]?[day % tips[phase]!.length] ?? 
-           '💖 Дбайте про себе сьогодні!';
+
+    return tips[phase]?[day % tips[phase]!.length] ??
+        '💖 Take care of yourself today!';
   }
-  
-  static String getCyclePhase(DateTime date, DateTime lastPeriodStart, int cycleLength, int periodLength) {
+
+  static String getCyclePhase(
+    DateTime date,
+    DateTime lastPeriodStart,
+    int cycleLength,
+    int periodLength,
+  ) {
     final dayOfCycle = date.difference(lastPeriodStart).inDays % cycleLength;
-    
+
     if (dayOfCycle < periodLength) {
       return 'menstrual';
     } else if (dayOfCycle < cycleLength - 14) {

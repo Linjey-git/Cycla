@@ -39,7 +39,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Consumer<CycleProvider>(
       builder: (context, provider, child) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Календар циклу')),
+          appBar: AppBar(title: const Text('Cycle calendar')),
           body: Column(
             children: [
               // Легенда
@@ -51,16 +51,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildLegendItem('Менструація', AppTheme.periodColor),
-                        _buildLegendItem('Фертильне', AppTheme.fertileColor),
+                        _buildLegendItem('Menstruation', AppTheme.periodColor),
+                        _buildLegendItem('Fertile', AppTheme.fertileColor),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildLegendItem('Овуляція', AppTheme.ovulationColor),
-                        _buildLegendItem('Звичайний', AppTheme.normalColor),
+                        _buildLegendItem('Ovulation', AppTheme.ovulationColor),
+                        _buildLegendItem('Ordinary', AppTheme.normalColor),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -80,7 +80,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Календар показує 12 місяців (2 назад + 10 вперед)',
+                            'The calendar shows 12 months (2 back + 10 forward)',
                             style: TextStyle(
                               fontSize: 12,
                               color: AppTheme.primaryColor,
@@ -101,7 +101,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   focusedDay: _focusedDay,
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                   calendarFormat: CalendarFormat.month,
-                  locale: 'uk_UA',
+                  locale: 'en_US',
                   startingDayOfWeek: StartingDayOfWeek.monday,
                   calendarStyle: CalendarStyle(
                     todayDecoration: BoxDecoration(
@@ -282,13 +282,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     if (provider.lastPeriodStart != null) {
       if (provider.isPeriodDay(day)) {
-        phaseInfo = '🌸 День менструації';
+        phaseInfo = '🌸 Menstruation Day';
       } else if (provider.isOvulationDay(day)) {
-        phaseInfo = '🌟 День овуляції';
+        phaseInfo = '🌟 Ovulation day';
       } else if (provider.isFertileDay(day)) {
-        phaseInfo = '💚 Фертильний день';
+        phaseInfo = '💚 Fertile day';
       } else {
-        phaseInfo = '📅 Звичайний день';
+        phaseInfo = '📅 An ordinary day';
       }
     }
 
@@ -304,7 +304,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              DateFormat('d MMMM yyyy', 'uk').format(day),
+              DateFormat('d MMMM yyyy', 'en').format(day),
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 8),
@@ -321,7 +321,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ],
             if (symptoms.isNotEmpty) ...[
               const Text(
-                'Симптоми:',
+                'Symptoms:',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -359,7 +359,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   _addSymptomDialog(context, day, provider);
                 },
                 icon: const Icon(Icons.add),
-                label: const Text('Додати симптом'),
+                label: const Text('Add symptom'),
               ),
             ),
           ],
@@ -376,7 +376,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Додати симптом'),
+        title: const Text('Add symptom'),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.builder(
@@ -398,7 +398,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Скасувати'),
+            child: const Text('Cancel'),
           ),
         ],
       ),

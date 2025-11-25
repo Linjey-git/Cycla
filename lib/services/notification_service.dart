@@ -71,7 +71,6 @@ class NotificationService {
     if (scheduledTime.isBefore(now)) {
       // Якщо час вже минув, плануємо на завтра на той же час
       finalScheduledTime = scheduledTime.add(const Duration(days: 1));
-      print('⚠️ Час був в минулому. Планується на: $finalScheduledTime');
     }
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -103,13 +102,10 @@ class NotificationService {
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
-
-    print('✅ Нотифікація планується на: $finalScheduledTime');
   }
 
   static tz.TZDateTime _convertToTZDateTime(DateTime dateTime) {
     final tz.TZDateTime tzDateTime = tz.TZDateTime.from(dateTime, tz.local);
-    print('🕐 TZ DateTime: $tzDateTime');
     return tzDateTime;
   }
 

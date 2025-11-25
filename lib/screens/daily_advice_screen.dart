@@ -13,7 +13,7 @@ class DailyAdviceScreen extends StatelessWidget {
         final today = DateTime.now();
         String phase = 'normal';
         List<String> tips = [];
-        String phaseTitle = 'Поради дня';
+        String phaseTitle = 'Tips of the day';
         String phaseEmoji = '💖';
         Color phaseColor = AppTheme.normalColor;
 
@@ -32,38 +32,38 @@ class DailyAdviceScreen extends StatelessWidget {
 
           switch (phase) {
             case 'menstrual':
-              phaseTitle = 'Менструація';
+              phaseTitle = 'Menstruation';
               phaseEmoji = '🌸';
               phaseColor = AppTheme.periodColor;
               break;
             case 'follicular':
-              phaseTitle = 'Фолікулярна фаза';
+              phaseTitle = 'Follicular phase';
               phaseEmoji = '🌱';
               phaseColor = AppTheme.fertileColor;
               break;
             case 'ovulation':
-              phaseTitle = 'Овуляція';
+              phaseTitle = 'Ovulation';
               phaseEmoji = '🌟';
               phaseColor = AppTheme.ovulationColor;
               break;
             case 'luteal':
-              phaseTitle = 'Лютеїнова фаза';
+              phaseTitle = 'Luteal phase';
               phaseEmoji = '🌙';
               phaseColor = AppTheme.secondaryColor;
               break;
           }
         } else {
           tips = [
-            '💖 Налаштуйте свій цикл у головному меню',
-            '📱 Використовуйте календар для відстеження',
-            '📝 Додавайте симптоми щодня',
-            '⏰ Встановіть нагадування',
-            '🌸 Дбайте про себе!',
+            '💖 Set up your cycle in the main menu',
+            '📱 Use the calendar to keep track',
+            '📝 Add symptoms daily',
+            '⏰ Set a reminder',
+            '🌸 Take care of yourself!',
           ];
         }
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Щоденні поради')),
+          appBar: AppBar(title: const Text('Daily tips')),
           body: SingleChildScrollView(
             child: Column(
               children: [
@@ -108,7 +108,7 @@ class DailyAdviceScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Поради для цієї фази',
+                        'Tips for this phase',
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       const SizedBox(height: 16),
@@ -131,15 +131,15 @@ class DailyAdviceScreen extends StatelessWidget {
   String _getPhaseDescription(String phase) {
     switch (phase) {
       case 'menstrual':
-        return 'Час для відпочинку та самотурботи';
+        return 'Time for relaxation and self-care';
       case 'follicular':
-        return 'Енергія зростає, ідеальний час для нових проектів';
+        return 'Energy is rising, the perfect time for new projects';
       case 'ovulation':
-        return 'Пік енергії та впевненості';
+        return 'Peak energy and confidence';
       case 'luteal':
-        return 'Час уповільнитись та прислухатись до тіла';
+        return 'Time to slow down and listen to your body';
       default:
-        return 'Дбайте про своє здоров\'я щодня';
+        return 'Take care of your health every day';
     }
   }
 
@@ -164,44 +164,44 @@ class DailyAdviceScreen extends StatelessWidget {
   Widget _buildInfoSection(BuildContext context, String phase) {
     final Map<String, List<String>> phaseInfo = {
       'menstrual': [
-        '💧 Рекомендована активність',
-        'Легка йога, розтяжка, прогулянки на свіжому повітрі',
+        '💧 Recommended activity',
+        'Light yoga, stretching, walks in the fresh air',
         '',
-        '🥗 Харчування',
-        'Залізо (шпинат, червоне м\'ясо), магній, вітамін С',
+        '🥗 Food',
+        'Iron (spinach, red meat), magnesium, vitamin C',
         '',
-        '😌 Емоційний стан',
-        'Можлива втома, потреба у спокої та підтримці',
+        '😌 Emotional state',
+        'Possible fatigue, need for rest and support',
       ],
       'follicular': [
-        '💪 Рекомендована активність',
-        'Інтенсивні тренування, кардіо, силові вправи',
+        '💪 Recommended activity',
+        'Intense workouts, cardio, strength training',
         '',
-        '🥗 Харчування',
-        'Білки, свіжі овочі та фрукти, цільні зерна',
+        '🥗 Food',
+        'Protein, fresh vegetables and fruit, whole grains',
         '',
-        '😊 Емоційний стан',
-        'Підвищена енергія, оптимізм, мотивація',
+        '😊 Emotional state',
+        'Increased energy, optimism, motivation',
       ],
       'ovulation': [
-        '🏃 Рекомендована активність',
-        'Високоінтенсивні тренування, нові виклики',
+        '🏃 Recommended activity',
+        'High-intensity training, new challenges',
         '',
-        '🥗 Харчування',
-        'Омега-3, антиоксиданти, клітковина',
+        '🥗 Food',
+        'Omega-3, antioxidants, fibre',
         '',
-        '😍 Емоційний стан',
-        'Впевненість, комунікабельність, привабливість',
+        '😍 Emotional state',
+        'Confidence, sociability, attractiveness',
       ],
       'luteal': [
-        '🧘 Рекомендована активність',
-        'Помірні тренування, пілатес, ходьба',
+        '🧘 Recommended activity',
+        'Moderate exercise, Pilates, walking',
         '',
-        '🥗 Харчування',
-        'Складні вуглеводи, вітамін B6, кальцій',
+        '🥗 Food',
+        'Complex carbohydrates, vitamin B6, calcium',
         '',
-        '😐 Емоційний стан',
-        'Можливі перепади настрою, потреба у комфорті',
+        '😐 Emotional state',
+        'Possible mood swings, need for comfort',
       ],
     };
 
@@ -214,7 +214,7 @@ class DailyAdviceScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Детальна інформація',
+              'Detailed information',
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
