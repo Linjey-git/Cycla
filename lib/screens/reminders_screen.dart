@@ -270,6 +270,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   selectedTime.minute,
                 );
 
+                // ✅ Зберігаємо в БД
                 final id = await DatabaseService.instance.saveReminder({
                   'title': titleController.text,
                   'description': descriptionController.text,
@@ -277,7 +278,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   'is_active': 1,
                 });
 
-                // Планування нотифікації
+                // ✅ Планування нотифікації
                 await NotificationService.scheduleNotification(
                   id: id,
                   title: titleController.text,
@@ -288,28 +289,19 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   fln: flutterLocalNotificationsPlugin,
                 );
 
-                // КЛЮЧ: оновлюємо локальний список ПЕРЕД закриттям форми
-                setState(() {
-                  reminders.add({
-                    'id': id,
-                    'title': titleController.text,
-                    'description': descriptionController.text,
-                    'time': scheduledTime.toIso8601String(),
-                    'is_active': 1,
-                  });
-                });
+                // ✅ Оновлюємо локальний список
+                await _loadReminders();
 
+                // ✅ ПОТІМ закриваємо форму (як на home_screen)
                 Navigator.pop(context);
 
+                // ✅ Показуємо повідомлення ПІСЛЯ закриття
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Нагадування додано'),
                     backgroundColor: AppTheme.primaryColor,
                   ),
                 );
-
-                // Асинхронно оновити повний список з БД (для синхронізації)
-                _loadReminders();
               },
               child: const Text('Додати'),
             ),

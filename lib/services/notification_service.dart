@@ -4,22 +4,23 @@ import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   static Future<void> initialize(
-      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin,
+  ) async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
@@ -37,13 +38,13 @@ class NotificationService {
   }) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'cycle_tracker_channel',
-      'Cycle Tracker',
-      channelDescription: 'Notifications for cycle tracking',
-      importance: Importance.high,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-    );
+          'cycle_tracker_channel',
+          'Cycle Tracker',
+          channelDescription: 'Notifications for cycle tracking',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+        );
 
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails();
@@ -53,12 +54,7 @@ class NotificationService {
       iOS: iOSPlatformChannelSpecifics,
     );
 
-    await fln.show(
-      id,
-      title,
-      body,
-      platformChannelSpecifics,
-    );
+    await fln.show(id, title, body, platformChannelSpecifics);
   }
 
   static Future<void> scheduleNotification({
@@ -68,15 +64,25 @@ class NotificationService {
     required DateTime scheduledTime,
     required FlutterLocalNotificationsPlugin fln,
   }) async {
+    // Перевіряємо, чи час не в минулому
+    final now = DateTime.now();
+    var finalScheduledTime = scheduledTime;
+
+    if (scheduledTime.isBefore(now)) {
+      // Якщо час вже минув, плануємо на завтра на той же час
+      finalScheduledTime = scheduledTime.add(const Duration(days: 1));
+      print('⚠️ Час був в минулому. Планується на: $finalScheduledTime');
+    }
+
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'cycle_tracker_channel',
-      'Cycle Tracker',
-      channelDescription: 'Scheduled notifications for cycle tracking',
-      importance: Importance.high,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-    );
+          'cycle_tracker_channel',
+          'Cycle Tracker',
+          channelDescription: 'Scheduled notifications for cycle tracking',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+        );
 
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails();
@@ -90,30 +96,33 @@ class NotificationService {
       id,
       title,
       body,
-      _convertToTZDateTime(scheduledTime),
+      _convertToTZDateTime(finalScheduledTime),
       platformChannelSpecifics,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
+
+    print('✅ Нотифікація планується на: $finalScheduledTime');
   }
 
   static tz.TZDateTime _convertToTZDateTime(DateTime dateTime) {
-    final tz.TZDateTime tzDateTime = tz.TZDateTime.from(
-      dateTime,
-      tz.local,
-    );
+    final tz.TZDateTime tzDateTime = tz.TZDateTime.from(dateTime, tz.local);
+    print('🕐 TZ DateTime: $tzDateTime');
     return tzDateTime;
   }
 
   static Future<void> cancelNotification(
-      int id, FlutterLocalNotificationsPlugin fln) async {
+    int id,
+    FlutterLocalNotificationsPlugin fln,
+  ) async {
     await fln.cancel(id);
   }
 
   static Future<void> cancelAllNotifications(
-      FlutterLocalNotificationsPlugin fln) async {
+    FlutterLocalNotificationsPlugin fln,
+  ) async {
     await fln.cancelAll();
   }
 }
