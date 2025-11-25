@@ -18,7 +18,11 @@ class _RemindersScreenState extends State<RemindersScreen> {
   @override
   void initState() {
     super.initState();
-    _loadReminders();
+    // _loadReminders();
+
+    Future.microtask(() async {
+      await _loadReminders();
+    });
   }
 
   Future<void> _loadReminders() async {
@@ -169,7 +173,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   );
                 }
 
-                _loadReminders();
+                await _loadReminders();
               },
             ),
             IconButton(
@@ -284,7 +288,17 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   fln: flutterLocalNotificationsPlugin,
                 );
 
-                _loadReminders();
+                // КЛЮЧ: оновлюємо локальний список ПЕРЕД закриттям форми
+                setState(() {
+                  reminders.add({
+                    'id': id,
+                    'title': titleController.text,
+                    'description': descriptionController.text,
+                    'time': scheduledTime.toIso8601String(),
+                    'is_active': 1,
+                  });
+                });
+
                 Navigator.pop(context);
 
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -293,6 +307,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
                     backgroundColor: AppTheme.primaryColor,
                   ),
                 );
+
+                // Асинхронно оновити повний список з БД (для синхронізації)
+                _loadReminders();
               },
               child: const Text('Додати'),
             ),
@@ -320,7 +337,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 id,
                 flutterLocalNotificationsPlugin,
               );
-              _loadReminders();
+              await _loadReminders();
               Navigator.pop(context);
 
               ScaffoldMessenger.of(context).showSnackBar(

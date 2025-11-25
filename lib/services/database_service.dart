@@ -1,6 +1,5 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:encrypt/encrypt.dart' as encrypt;
 
 class DatabaseService {
   static final DatabaseService instance = DatabaseService._init();
@@ -18,7 +17,12 @@ class DatabaseService {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(
+      path,
+      version: 2, // Збільшуємо версію для міграції
+      onCreate: _createDB,
+      onUpgrade: _upgradeDB,
+    );
   }
 
   Future _createDB(Database db, int version) async {
@@ -38,8 +42,9 @@ class DatabaseService {
     await db.execute('''
       CREATE TABLE symptoms (
         id $idType,
-        date $textType,
-        symptom $textType
+        date $textType UNIQUE,
+        symptoms TEXT,
+        description TEXT
       )
     ''');
 
@@ -52,6 +57,23 @@ class DatabaseService {
         is_active INTEGER DEFAULT 1
       )
     ''');
+  }
+
+  Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Видаляємо стару таблицю
+      await db.execute('DROP TABLE IF EXISTS symptoms');
+
+      // Створюємо нову з правильною схемою
+      await db.execute('''
+        CREATE TABLE symptoms (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          date TEXT UNIQUE,
+          symptoms TEXT,
+          description TEXT
+        )
+      ''');
+    }
   }
 
   // Цикл даних
@@ -91,12 +113,36 @@ class DatabaseService {
   }
 
   // Симптоми
-  Future<void> saveSymptom(DateTime date, String symptom) async {
+  Future<void> saveSymptom(
+    DateTime date,
+    List<String> symptoms,
+    String description,
+  ) async {
     final db = await instance.database;
-    await db.insert('symptoms', {
-      'date': date.toIso8601String().split('T')[0],
-      'symptom': symptom,
-    });
+    final dateStr = date.toIso8601String().split('T')[0];
+
+    final data = {
+      'date': dateStr,
+      'symptoms': symptoms.join(','),
+      'description': description,
+    };
+
+    final existing = await db.query(
+      'symptoms',
+      where: 'date = ?',
+      whereArgs: [dateStr],
+    );
+
+    if (existing.isNotEmpty) {
+      await db.update(
+        'symptoms',
+        data,
+        where: 'date = ?',
+        whereArgs: [dateStr],
+      );
+    } else {
+      await db.insert('symptoms', data);
+    }
   }
 
   Future<Map<DateTime, List<String>>> getAllSymptoms() async {
@@ -106,12 +152,12 @@ class DatabaseService {
     Map<DateTime, List<String>> symptoms = {};
     for (var row in results) {
       final date = DateTime.parse(row['date'] as String);
-      final symptom = row['symptom'] as String;
+      final symptomsStr = row['symptoms'] as String? ?? '';
+      final symptomsList = symptomsStr.isNotEmpty
+          ? symptomsStr.split(',')
+          : <String>[];
 
-      if (symptoms[date] == null) {
-        symptoms[date] = [];
-      }
-      symptoms[date]!.add(symptom);
+      symptoms[date] = symptomsList;
     }
 
     return symptoms;
@@ -127,18 +173,32 @@ class DatabaseService {
       whereArgs: [dateStr],
     );
 
-    return results.map((row) => row['symptom'] as String).toList();
+    if (results.isEmpty) return [];
+
+    final symptomsStr = results.first['symptoms'] as String? ?? '';
+    return symptomsStr.isNotEmpty ? symptomsStr.split(',') : <String>[];
   }
 
-  Future<void> deleteSymptom(DateTime date, String symptom) async {
+  Future<String> getSymptomDescription(DateTime date) async {
     final db = await instance.database;
     final dateStr = date.toIso8601String().split('T')[0];
 
-    await db.delete(
+    final results = await db.query(
       'symptoms',
-      where: 'date = ? AND symptom = ?',
-      whereArgs: [dateStr, symptom],
+      where: 'date = ?',
+      whereArgs: [dateStr],
     );
+
+    if (results.isEmpty) return '';
+
+    return results.first['description'] as String? ?? '';
+  }
+
+  Future<void> deleteSymptom(DateTime date) async {
+    final db = await instance.database;
+    final dateStr = date.toIso8601String().split('T')[0];
+
+    await db.delete('symptoms', where: 'date = ?', whereArgs: [dateStr]);
   }
 
   // Нагадування

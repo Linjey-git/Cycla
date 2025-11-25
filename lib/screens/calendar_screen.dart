@@ -5,6 +5,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import '../main.dart';
 import '../utils/theme.dart';
+import '../utils/constants.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  
+
   // Обмеження календаря: 2 місяці назад, поточний місяць, 9 місяців вперед
   late DateTime _firstDay;
   late DateTime _lastDay;
@@ -26,7 +27,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.initState();
     final now = DateTime.now();
     _firstDay = DateTime(now.year, now.month - 2, 1);
-    _lastDay = DateTime(now.year, now.month + 10, 0); // Останній день 9-го місяця вперед
+    _lastDay = DateTime(
+      now.year,
+      now.month + 10,
+      0,
+    ); // Останній день 9-го місяця вперед
   }
 
   @override
@@ -34,9 +39,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Consumer<CycleProvider>(
       builder: (context, provider, child) {
         return Scaffold(
-          appBar: AppBar(
-            title: const Text('Календар циклу'),
-          ),
+          appBar: AppBar(title: const Text('Календар циклу')),
           body: Column(
             children: [
               // Легенда
@@ -70,9 +73,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.info_outline, 
-                              size: 16, 
-                              color: AppTheme.primaryColor),
+                          Icon(
+                            Icons.info_outline,
+                            size: 16,
+                            color: AppTheme.primaryColor,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             'Календар показує 12 місяців (2 назад + 10 вперед)',
@@ -87,7 +92,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   ],
                 ),
               ),
-              
+
               // Календар
               Expanded(
                 child: TableCalendar(
@@ -122,21 +127,37 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       return _buildCalendarDay(context, day, provider);
                     },
                     todayBuilder: (context, day, focusedDay) {
-                      return _buildCalendarDay(context, day, provider, isToday: true);
+                      return _buildCalendarDay(
+                        context,
+                        day,
+                        provider,
+                        isToday: true,
+                      );
                     },
                     selectedBuilder: (context, day, focusedDay) {
-                      return _buildCalendarDay(context, day, provider, isSelected: true);
+                      return _buildCalendarDay(
+                        context,
+                        day,
+                        provider,
+                        isSelected: true,
+                      );
                     },
                     outsideBuilder: (context, day, focusedDay) {
                       // Показати дні поза поточним місяцем, але в межах дозволеного діапазону
                       if (day.isBefore(_firstDay) || day.isAfter(_lastDay)) {
                         return Container();
                       }
-                      return _buildCalendarDay(context, day, provider, isOutside: true);
+                      return _buildCalendarDay(
+                        context,
+                        day,
+                        provider,
+                        isOutside: true,
+                      );
                     },
                   ),
                   onDaySelected: (selectedDay, focusedDay) {
-                    if (selectedDay.isBefore(_firstDay) || selectedDay.isAfter(_lastDay)) {
+                    if (selectedDay.isBefore(_firstDay) ||
+                        selectedDay.isAfter(_lastDay)) {
                       return; // Не дозволяти вибирати дні поза діапазоном
                     }
                     setState(() {
@@ -170,10 +191,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         Container(
           width: 20,
           height: 20,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 8),
         Text(label, style: const TextStyle(fontSize: 12)),
@@ -304,32 +322,33 @@ class _CalendarScreenState extends State<CalendarScreen> {
             if (symptoms.isNotEmpty) ...[
               const Text(
                 'Симптоми:',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              ...symptoms.map((symptom) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.check_circle,
-                            color: AppTheme.primaryColor, size: 20),
-                        const SizedBox(width: 8),
-                        Expanded(child: Text(symptom)),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            provider.symptoms[day]!.remove(symptom);
-                            DatabaseService.instance.deleteSymptom(day, symptom);
-                            Navigator.pop(context);
-                            setState(() {});
-                          },
-                        ),
-                      ],
-                    ),
-                  )),
+              ...symptoms.map(
+                (symptom) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.check_circle,
+                        color: AppTheme.primaryColor,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(symptom)),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          provider.removeSymptom(day, symptom);
+                          Navigator.pop(context);
+                          setState(() {});
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(height: 16),
             ],
             SizedBox(

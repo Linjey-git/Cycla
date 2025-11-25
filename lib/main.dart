@@ -8,6 +8,7 @@ import 'services/database_service.dart';
 import 'services/notification_service.dart';
 import 'services/cycle_calculator.dart';
 import 'utils/theme.dart';
+import 'utils/constants.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -102,9 +103,29 @@ class CycleProvider extends ChangeNotifier {
     if (_symptoms[date] == null) {
       _symptoms[date] = [];
     }
-    _symptoms[date]!.add(symptom);
-    await DatabaseService.instance.saveSymptom(date, symptom);
-    notifyListeners();
+    if (!_symptoms[date]!.contains(symptom)) {
+      _symptoms[date]!.add(symptom);
+      // Зберігаємо весь список симптомів за цю дату
+      await DatabaseService.instance.saveSymptom(
+        date,
+        _symptoms[date]!,
+        '', // Порожній опис для календаря
+      );
+      notifyListeners();
+    }
+  }
+  
+  Future<void> removeSymptom(DateTime date, String symptom) async {
+    if (_symptoms[date] != null) {
+      _symptoms[date]!.remove(symptom);
+      // Оновлюємо весь список симптомів за цю дату
+      await DatabaseService.instance.saveSymptom(
+        date,
+        _symptoms[date]!,
+        '', // Порожній опис для календаря
+      );
+      notifyListeners();
+    }
   }
   
   CycleCalculator? getCalculator() {
