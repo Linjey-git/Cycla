@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../main.dart';
+import '../utils/constants.dart';
 import '../utils/theme.dart';
 import 'calendar_screen.dart';
 import 'daily_advice_screen.dart';
@@ -46,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
           selectedFontSize: 12,
           unselectedFontSize: 12,
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Головна'),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today),
               label: 'Calendar',
