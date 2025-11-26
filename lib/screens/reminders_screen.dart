@@ -283,7 +283,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   id: id,
                   title: titleController.text,
                   body: descriptionController.text.isEmpty
-                      ? 'Час прийняти ліки'
+                      ? 'Time to take your medicine'
                       : descriptionController.text,
                   scheduledTime: scheduledTime,
                   fln: flutterLocalNotificationsPlugin,
@@ -332,9 +332,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
               await _loadReminders();
               Navigator.pop(context);
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Reminder deleted')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Reminder deleted')));
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Delete'),
